@@ -1,0 +1,327 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Machine learning powered financial transaction fraud detection dashboard">
+    <title>FraudLens | Transaction Intelligence</title>
+
+    <link rel="stylesheet" href="style.css">
+    <script src="script.js" defer></script>
+</head>
+<body>
+    <div class="app-shell">
+
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <a href="#" class="brand">
+                <span class="brand-icon">F</span>
+                <span>FraudLens</span>
+            </a>
+
+            <div class="sidebar-section">
+                <p class="sidebar-label">WORKSPACE</p>
+                <a href="#" class="nav-item active">
+                    <span class="nav-icon">▦</span>
+                    Transaction Analysis
+                </a>
+                <a href="#results" class="nav-item">
+                    <span class="nav-icon">◷</span>
+                    Prediction Results
+                </a>
+            </div>
+
+            <div class="sidebar-bottom">
+                <div class="status-indicator"></div>
+                <div>
+                    <p class="status-title">ML Engine</p>
+                    <p class="status-subtitle" id="api-status">Checking API...</p>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main content -->
+        <main class="main-content">
+
+            <header class="topbar">
+                <div>
+                    <p class="eyebrow">RISK MANAGEMENT / OVERVIEW</p>
+                    <h1>Transaction Intelligence</h1>
+                    <p class="page-description">
+                        Analyze financial transactions using machine learning.
+                    </p>
+                </div>
+
+                <div class="topbar-badge">
+                    <span class="live-dot"></span>
+                    ML-powered analysis
+                </div>
+            </header>
+
+            <!-- Summary cards -->
+            <section class="summary-grid" aria-label="System overview">
+                <article class="summary-card">
+                    <div class="summary-icon purple">◎</div>
+                    <p class="summary-label">Prediction Engine</p>
+                    <h2>Logistic Regression</h2>
+                    <p class="summary-note">Baseline ML model</p>
+                </article>
+
+                <article class="summary-card">
+                    <div class="summary-icon blue">⌘</div>
+                    <p class="summary-label">API Framework</p>
+                    <h2>FastAPI</h2>
+                    <p class="summary-note">Real-time inference endpoint</p>
+                </article>
+
+                <article class="summary-card">
+                    <div class="summary-icon green">↗</div>
+                    <p class="summary-label">Decision Threshold</p>
+                    <h2 id="threshold-display">50%</h2>
+                    <p class="summary-note">Default classification threshold</p>
+                </article>
+            </section>
+
+            <!-- Analysis layout -->
+            <section class="analysis-grid">
+
+                <!-- Transaction form -->
+                <article class="panel form-panel">
+                    <div class="panel-heading">
+                        <div>
+                            <p class="eyebrow">INPUT DATA</p>
+                            <h2>Analyze a transaction</h2>
+                            <p class="panel-description">
+                                Enter the transaction details below.
+                            </p>
+                        </div>
+                        <span class="step-number">01</span>
+                    </div>
+
+                    <form id="transaction-form">
+
+                        <div class="field-group">
+                            <label for="type">Transaction type</label>
+                            <select id="type" name="type" required>
+                                <option value="TRANSFER">TRANSFER</option>
+                                <option value="CASH_OUT">CASH_OUT</option>
+                                <option value="PAYMENT">PAYMENT</option>
+                                <option value="CASH_IN">CASH_IN</option>
+                                <option value="DEBIT">DEBIT</option>
+                            </select>
+                        </div>
+
+                        <div class="field-group">
+                            <label for="amount">Transaction amount</label>
+                            <input
+                                type="number"
+                                id="amount"
+                                name="amount"
+                                min="0"
+                                step="any"
+                                placeholder="e.g. 5000"
+                                required
+                            >
+                        </div>
+
+                        <div class="form-divider">
+                            <span>ORIGIN ACCOUNT</span>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="field-group">
+                                <label for="oldbalanceOrg">Previous balance</label>
+                                <input
+                                    type="number"
+                                    id="oldbalanceOrg"
+                                    name="oldbalanceOrg"
+                                    min="0"
+                                    step="any"
+                                    placeholder="5000"
+                                    required
+                                >
+                            </div>
+
+                            <div class="field-group">
+                                <label for="newbalanceOrig">New balance</label>
+                                <input
+                                    type="number"
+                                    id="newbalanceOrig"
+                                    name="newbalanceOrig"
+                                    min="0"
+                                    step="any"
+                                    placeholder="0"
+                                    required
+                                >
+                            </div>
+                        </div>
+
+                        <div class="form-divider">
+                            <span>DESTINATION ACCOUNT</span>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="field-group">
+                                <label for="oldbalanceDest">Previous balance</label>
+                                <input
+                                    type="number"
+                                    id="oldbalanceDest"
+                                    name="oldbalanceDest"
+                                    min="0"
+                                    step="any"
+                                    placeholder="1000"
+                                    required
+                                >
+                            </div>
+
+                            <div class="field-group">
+                                <label for="newbalanceDest">New balance</label>
+                                <input
+                                    type="number"
+                                    id="newbalanceDest"
+                                    name="newbalanceDest"
+                                    min="0"
+                                    step="any"
+                                    placeholder="6000"
+                                    required
+                                >
+                            </div>
+                        </div>
+
+                        <div class="form-divider">
+                            <span>BALANCE DIFFERENCES</span>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="field-group">
+                                <label for="balanceDiffOrig">Origin difference</label>
+                                <input
+                                    type="number"
+                                    id="balanceDiffOrig"
+                                    name="balanceDiffOrig"
+                                    step="any"
+                                    placeholder="5000"
+                                    required
+                                >
+                            </div>
+
+                            <div class="field-group">
+                                <label for="balanceDiffDest">Destination difference</label>
+                                <input
+                                    type="number"
+                                    id="balanceDiffDest"
+                                    name="balanceDiffDest"
+                                    step="any"
+                                    placeholder="-5000"
+                                    required
+                                >
+                            </div>
+                        </div>
+
+                        <p class="form-hint">
+                            Balance differences can be positive or negative.
+                        </p>
+
+                        <div id="form-error" class="message error-message" role="alert" hidden></div>
+
+                        <button type="submit" id="analyze-button" class="primary-button">
+                            <span>Analyze transaction</span>
+                            <span aria-hidden="true">→</span>
+                        </button>
+
+                        <button type="button" id="sample-button" class="secondary-button">
+                            Load sample transaction
+                        </button>
+                    </form>
+                </article>
+
+                <!-- Results -->
+                <article class="panel results-panel" id="results">
+                    <div class="panel-heading">
+                        <div>
+                            <p class="eyebrow">MODEL OUTPUT</p>
+                            <h2>Prediction results</h2>
+                            <p class="panel-description">
+                                The model's assessment of the transaction.
+                            </p>
+                        </div>
+                        <span class="step-number">02</span>
+                    </div>
+
+                    <div id="result-placeholder" class="result-placeholder">
+                        <div class="placeholder-icon">⌁</div>
+                        <h3>Awaiting analysis</h3>
+                        <p>
+                            Submit a transaction to see the model's prediction
+                            and estimated fraud probability.
+                        </p>
+                    </div>
+
+                    <div id="result-content" hidden>
+                        <div id="result-status" class="result-status">
+                            <span id="result-status-icon">!</span>
+                            <div>
+                                <p class="result-status-label">CLASSIFICATION</p>
+                                <h3 id="result-label">—</h3>
+                            </div>
+                        </div>
+
+                        <div class="probability-section">
+                            <div class="probability-heading">
+                                <span>Fraud probability</span>
+                                <strong id="probability-value">0%</strong>
+                            </div>
+
+                            <div
+                                class="probability-track"
+                                role="progressbar"
+                                aria-label="Estimated fraud probability"
+                                aria-valuemin="0"
+                                aria-valuemax="100"
+                                aria-valuenow="0"
+                                id="probability-track"
+                            >
+                                <div id="probability-bar" class="probability-bar"></div>
+                            </div>
+
+                            <div class="scale-labels">
+                                <span>0%</span>
+                                <span>50%</span>
+                                <span>100%</span>
+                            </div>
+                        </div>
+
+                        <div class="result-metrics">
+                            <div class="metric-box">
+                                <span>Prediction class</span>
+                                <strong id="prediction-value">—</strong>
+                            </div>
+                            <div class="metric-box">
+                                <span>Decision threshold</span>
+                                <strong id="result-threshold">—</strong>
+                            </div>
+                        </div>
+
+                        <div id="result-explanation" class="result-explanation"></div>
+                    </div>
+
+                    <div class="disclaimer">
+                        <span>ⓘ</span>
+                        <p>
+                            This prediction is a model estimate, not confirmation
+                            of fraud. Do not use it as the sole basis for financial decisions.
+                        </p>
+                    </div>
+                </article>
+            </section>
+
+            <footer class="footer">
+                <span>FraudLens · Machine Learning Project</span>
+                <span>FastAPI + scikit-learn</span>
+            </footer>
+
+        </main>
+    </div>
+</body>
+</html>

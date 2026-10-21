@@ -1,8 +1,13 @@
 .venv/
 
+#Python cache files
 __pycache__/
 *.py[cod]
 
 AIML Dataset.csv
 
 .vscode/
+
+# Environment variables and secrets
+.env
+.env.*
